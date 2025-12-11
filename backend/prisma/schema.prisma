@@ -1,0 +1,158 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")  // 
+}
+
+// --------------------------------------
+// 👤 USUARIOS & GAMIFICACIÓN
+// --------------------------------------
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  username  String   // Nombre de Aventurero
+  password  String   // Hash
+  avatar    String?  
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+
+  // RPG Stats
+  xpPoints  Int      @default(0)
+  level     Int      @default(1)
+  lootCoins Int      @default(0) // Saldo actual
+
+  // Relaciones
+  orders      Order[]
+  coinHistory CoinLedger[]
+  reviews     Review[]
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+// Historial inmutable de monedas (Seguridad)
+model CoinLedger {
+  id        String   @id @default(uuid())
+  amount    Int      // Positivo (Ganó) o Negativo (Gastó)
+  reason    String   // ej: "Compra Orden #123", "Bono Login"
+  createdAt DateTime @default(now())
+  
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+// --------------------------------------
+// ⚔️ CATÁLOGO & INVENTARIO
+// --------------------------------------
+
+model Product {
+  id          String   @id @default(uuid())
+  title       String
+  slug        String   @unique // SEO: goku-ssj-banpresto
+  description String   @db.Text
+  brand       String   // Banpresto, Konami
+  franchise   String   // Dragon Ball, Pokemon
+  category    Category 
+  images      String[] // Fotos genéricas del producto
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  variants    ProductVariant[]
+  reviews     Review[]
+}
+
+model ProductVariant {
+  id          String   @id @default(uuid())
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id])
+
+  // Lógica de negocio Argentina
+  tier        ProductTier   @default(OFFICIAL)
+  condition   String?       // Detalle texto: "Caja abollada", "Falta espada"
+  
+  price       Decimal       @db.Decimal(10, 2)
+  stock       Int           @default(0)
+  realPhotos  String[]      // Fotos específicas de ESTA unidad usada
+
+  cartItems   CartItem[]
+  orderItems  OrderItem[]
+}
+
+enum Category {
+  FIGURE
+  TCG_CARD
+  PLUSHIE
+  DECOR
+  APPAREL
+}
+
+enum ProductTier {
+  OFFICIAL        // Nuevo, Sellado
+  SECOND_HAND     // Usado cuidado / Open Box
+  BATTLE_DAMAGED  // Usado con detalles / Sin caja
+}
+
+// --------------------------------------
+// 🛒 COMPRAS & CHECKOUT
+// --------------------------------------
+
+model Order {
+  id          String      @id @default(uuid())
+  userId      String
+  user        User        @relation(fields: [userId], references: [id])
+  
+  status      OrderStatus @default(PENDING)
+  total       Decimal     @db.Decimal(10, 2)
+  paymentId   String?     // ID de Mercado Pago
+  
+  items       OrderItem[]
+  createdAt   DateTime    @default(now())
+}
+
+model OrderItem {
+  id          String   @id @default(uuid())
+  orderId     String
+  order       Order    @relation(fields: [orderId], references: [id])
+  
+  variantId   String
+  variant     ProductVariant @relation(fields: [variantId], references: [id])
+  
+  quantity    Int
+  price       Decimal  @db.Decimal(10, 2) // Precio congelado al momento de compra
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+// Carrito temporal (Persistencia)
+model CartItem {
+  id        String   @id @default(uuid())
+  userId    String   // O SessionID si es invitado
+  variantId String
+  variant   ProductVariant @relation(fields: [variantId], references: [id])
+  quantity  Int
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  content   String
+  rating    Int
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+}
