@@ -6,7 +6,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")  // 
+  url      = env("DATABASE_URL")
 }
 
 // --------------------------------------
@@ -25,7 +25,7 @@ model User {
   // RPG Stats
   xpPoints  Int      @default(0)
   level     Int      @default(1)
-  lootCoins Int      @default(0) // Saldo actual
+  lootCoins Int      @default(0) // Saldo actual de monedas
 
   // Relaciones
   orders      Order[]
@@ -61,7 +61,7 @@ model Product {
   brand       String   // Banpresto, Konami
   franchise   String   // Dragon Ball, Pokemon
   category    Category 
-  images      String[] // Fotos genéricas del producto
+  images      String[] // Fotos genéricas del producto Padre
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -75,13 +75,14 @@ model ProductVariant {
   productId   String
   product     Product  @relation(fields: [productId], references: [id])
 
-  // Lógica de negocio Argentina
+  // Lógica de negocio Loot Kingdom
   tier        ProductTier   @default(OFFICIAL)
-  condition   String?       // Detalle texto: "Caja abollada", "Falta espada"
+  condition   String?       // Detalle texto: "Sin caja", "Nuevo sellado"
+  internalNotes String?     // Notas privadas del admin
   
   price       Decimal       @db.Decimal(10, 2)
   stock       Int           @default(0)
-  realPhotos  String[]      // Fotos específicas de ESTA unidad usada
+  realPhotos  String[]      // Fotos específicas (usados)
 
   cartItems   CartItem[]
   orderItems  OrderItem[]
@@ -96,9 +97,9 @@ enum Category {
 }
 
 enum ProductTier {
-  OFFICIAL        // Nuevo, Sellado
-  SECOND_HAND     // Usado cuidado / Open Box
-  BATTLE_DAMAGED  // Usado con detalles / Sin caja
+  OFFICIAL        // Nuevo, Sellado, Importación directa
+  SECOND_HAND     // Pre-owned, cuidado, completos
+  BATTLE_DAMAGED  // Usado, Loose, sin caja, detalles estéticos
 }
 
 // --------------------------------------
@@ -111,11 +112,15 @@ model Order {
   user        User        @relation(fields: [userId], references: [id])
   
   status      OrderStatus @default(PENDING)
-  total       Decimal     @db.Decimal(10, 2)
+  total       Decimal     @db.Decimal(10, 2) // Total en ARS
   paymentId   String?     // ID de Mercado Pago
   
   items       OrderItem[]
   createdAt   DateTime    @default(now())
+  
+  // Gamificación de la orden
+  awardedXp   Int         @default(0)
+  awardedCoins Int        @default(0)
 }
 
 model OrderItem {
@@ -128,6 +133,8 @@ model OrderItem {
   
   quantity    Int
   price       Decimal  @db.Decimal(10, 2) // Precio congelado al momento de compra
+  productTitle String  // Snapshot del titulo
+  condition   String?  // Snapshot de la condicion
 }
 
 enum OrderStatus {

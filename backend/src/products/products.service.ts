@@ -1,33 +1,61 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateProductDto } from './dto/create-product.dto';
 
 @Injectable()
 export class ProductsService {
   constructor(private prisma: PrismaService) { }
 
-  // 1. Crear un producto nuevo
-  async create(createProductDto: CreateProductDto) {
-    // any cast removed, we assume DTO matches roughly or we let Prisma handle mismatch if strict types aren't fully aligned yet
+  // 1. Crear producto con variantes
+  async create(createProductDto: any) {
+    // createProductDto debe traer { title, variants: [{ price, tier, ... }] }
     return await this.prisma.product.create({
-      data: createProductDto as any, // Temporary cast until strict DTO alignment
+      data: {
+        title: createProductDto.title,
+        slug: createProductDto.slug,
+        description: createProductDto.description,
+        brand: createProductDto.brand,
+        franchise: createProductDto.franchise,
+        category: createProductDto.category,
+        images: createProductDto.images,
+        variants: {
+          create: createProductDto.variants, // Nested write de Prisma
+        },
+      },
+      include: { variants: true },
     });
   }
 
-  // 2. Traer todos los productos
+  // 2. Traer todos (Optimized fetch)
   async findAll() {
     return await this.prisma.product.findMany({
       include: {
-        variants: true,
+        variants: {
+          select: {  // Solo info vital para la vista de lista
+            id: true,
+            tier: true,
+            price: true,
+            stock: true,
+          }
+        },
       }
     });
   }
 
-  // 3. Buscar uno por ID
-  async findOne(id: string) {
-    return await this.prisma.product.findUnique({
-      where: { id },
-      include: { variants: true }
+  // 3. Buscar por Slug (Para la Product Page)
+  async findOne(slugOrId: string) {
+    // Intentamos buscar por slug primero, si falla, por ID
+    const product = await this.prisma.product.findFirst({
+      where: {
+        OR: [
+          { slug: slugOrId },
+          { id: slugOrId } // Fallback por si usamos ID interno
+        ]
+      },
+      include: {
+        variants: true,
+        reviews: true
+      }
     });
+    return product;
   }
 }
