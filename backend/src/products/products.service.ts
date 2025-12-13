@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { CreateProductDto } from './dto/create-product.dto';
 
 @Injectable()
 export class ProductsService {
   constructor(private prisma: PrismaService) { }
 
   // 1. Crear producto con variantes
-  async create(createProductDto: any) {
-    // createProductDto debe traer { title, variants: [{ price, tier, ... }] }
+  async create(createProductDto: CreateProductDto) {
+    // createProductDto viene validado por class-validator
     return await this.prisma.product.create({
       data: {
         title: createProductDto.title,
@@ -18,7 +19,7 @@ export class ProductsService {
         category: createProductDto.category,
         images: createProductDto.images,
         variants: {
-          create: createProductDto.variants, // Nested write de Prisma
+          create: createProductDto.variants.create, // Nested write de Prisma
         },
       },
       include: { variants: true },

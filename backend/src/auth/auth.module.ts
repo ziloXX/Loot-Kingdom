@@ -11,7 +11,8 @@ import { JwtStrategy } from './strategies/jwt.strategy';
         PrismaModule,
         PassportModule,
         JwtModule.register({
-            secret: process.env.JWT_SECRET || 'secretKey', // In production use Env var!
+            // 🔒 Safe assertion: JWT_SECRET is validated in main.ts bootstrap
+            secret: process.env.JWT_SECRET as string,
             signOptions: { expiresIn: '1h' },
         }),
     ],

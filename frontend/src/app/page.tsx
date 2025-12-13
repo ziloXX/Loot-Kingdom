@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/product/ProductCard";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 
 export default function Home() {
@@ -57,10 +58,12 @@ export default function Home() {
           <div className="flex flex-col gap-4 h-full">
             {/* Plushies */}
             <Link href="/products?category=PLUSHIE" className="relative flex-1 rounded-2xl overflow-hidden group hover-lift">
-              <img
+              <Image
                 src="https://m.media-amazon.com/images/I/71UWLV3dY-L._AC_SL1500_.jpg"
                 alt="Anime Plushies"
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                fill
+                className="object-cover transition-transform duration-700 group-hover:scale-110"
+                sizes="(max-width: 768px) 100vw, 25vw"
               />
               <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
                 <h3 className="text-2xl font-black text-white uppercase tracking-tighter drop-shadow-md">PLUSHIES</h3>
@@ -69,10 +72,12 @@ export default function Home() {
             </Link>
             {/* Cards */}
             <Link href="/products?category=TCG_CARD" className="relative flex-1 rounded-2xl overflow-hidden group hover-lift">
-              <img
+              <Image
                 src="https://images.unsplash.com/photo-1622398576449-6e5f6e3e6e8d?q=80&w=2000&auto=format&fit=crop"
                 alt="Trading Cards"
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                fill
+                className="object-cover transition-transform duration-700 group-hover:scale-110"
+                sizes="(max-width: 768px) 100vw, 25vw"
               />
               <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
                 <h3 className="text-2xl font-black text-white uppercase tracking-tighter drop-shadow-md">TRADING CARDS</h3>
@@ -84,10 +89,13 @@ export default function Home() {
           {/* CENTER COLUMN: FIGURES (Main Focus) */}
           <div className="md:col-span-2 relative rounded-2xl overflow-hidden group hover-lift h-[400px] md:h-full">
             <Link href="/products" className="block w-full h-full">
-              <img
+              <Image
                 src="https://m.media-amazon.com/images/I/81Hca2xBKrL._AC_SL1500_.jpg"
                 alt="Anime Figures Collection"
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                fill
+                priority
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                sizes="(max-width: 768px) 100vw, 50vw"
               />
               <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/90" />
               <div className="absolute bottom-8 left-8">
@@ -109,10 +117,12 @@ export default function Home() {
           <div className="flex flex-col gap-4 h-full">
             {/* Accessories / Decor */}
             <Link href="/products?category=DECOR" className="relative flex-1 rounded-2xl overflow-hidden group hover-lift">
-              <img
+              <Image
                 src="https://m.media-amazon.com/images/I/71uX-0BZoSL._AC_SL1500_.jpg"
                 alt="Anime Accessories"
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                fill
+                className="object-cover transition-transform duration-700 group-hover:scale-110"
+                sizes="(max-width: 768px) 100vw, 25vw"
               />
               <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
                 <h3 className="text-2xl font-black text-white uppercase tracking-tighter drop-shadow-md">ACCESSORIES</h3>
@@ -121,10 +131,12 @@ export default function Home() {
             </Link>
             {/* Black Market / Pre-owned */}
             <Link href="/products?tier=SECOND_HAND" className="relative flex-1 rounded-2xl overflow-hidden group hover-lift border-2 border-transparent hover:border-secondary">
-              <img
+              <Image
                 src="https://images.unsplash.com/photo-1607082349566-187342175e2f?q=80&w=2000&auto=format&fit=crop"
                 alt="Pre-Owned Collection"
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 saturate-50 group-hover:saturate-100"
+                fill
+                className="object-cover transition-transform duration-700 group-hover:scale-110 saturate-50 group-hover:saturate-100"
+                sizes="(max-width: 768px) 100vw, 25vw"
               />
               <div className="absolute inset-0 bg-secondary/20 mix-blend-overlay opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/90 to-transparent">

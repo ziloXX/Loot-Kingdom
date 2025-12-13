@@ -4,9 +4,9 @@ services:
     container_name: loot_kingdom_db
     restart: always
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: lootpassword123
-      POSTGRES_DB: lootkingdom
+      POSTGRES_USER: ${DB_USER:-admin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME:-lootkingdom}
     ports:
       - '5432:5432'
     volumes:

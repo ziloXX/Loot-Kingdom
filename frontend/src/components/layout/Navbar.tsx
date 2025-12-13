@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ShoppingCart, User, Menu, Search, Crown } from 'lucide-react';
@@ -7,9 +9,10 @@ import {
     SheetTrigger,
 } from '@/components/ui/sheet';
 import { Input } from '@/components/ui/input';
+import { useAuthStore } from '@/lib/auth-store';
 
 export default function Navbar() {
-    const isLogged = true;
+    const { user, isAuthenticated, logout } = useAuthStore();
 
     return (
         <header className="sticky top-0 z-50 w-full">
@@ -63,21 +66,23 @@ export default function Navbar() {
                             </span>
                         </Button>
 
-                        {isLogged ? (
+                        {isAuthenticated && user ? (
                             <div className="hidden sm:flex items-center gap-3 pl-3 border-l border-white/20">
                                 <div className="flex flex-col items-end text-xs">
                                     <span className="font-bold text-accent flex items-center gap-1">
-                                        1,450 <span className="text-xs">🪙</span>
+                                        {user.lootCoins.toLocaleString()} <span className="text-xs">🪙</span>
                                     </span>
-                                    <span className="text-white/70">Lvl 3</span>
+                                    <span className="text-white/70">Lvl {user.level}</span>
                                 </div>
-                                <Button variant="ghost" size="icon" className="rounded-full bg-white/10 hover:bg-white/20 text-white">
-                                    <User className="h-4 w-4" />
+                                <Button variant="ghost" size="icon" className="rounded-full bg-white/10 hover:bg-white/20 text-white" asChild>
+                                    <Link href="/profile">
+                                        <User className="h-4 w-4" />
+                                    </Link>
                                 </Button>
                             </div>
                         ) : (
-                            <Button size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90">
-                                Login
+                            <Button size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90" asChild>
+                                <Link href="/auth/login">Login</Link>
                             </Button>
                         )}
 

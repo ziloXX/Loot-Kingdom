@@ -4,10 +4,30 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
+  // 🔒 SECURITY: Validate critical environment variables before starting
+  const requiredEnvVars = ['JWT_SECRET', 'DATABASE_URL'];
+  const missingVars = requiredEnvVars.filter(v => !process.env[v]);
+
+  if (missingVars.length > 0) {
+    throw new Error(
+      `❌ FATAL: Missing required environment variables: ${missingVars.join(', ')}\n` +
+      `Server cannot start without these critical configuration values.`
+    );
+  }
+
   const app = await NestFactory.create(AppModule);
 
-  // Configuración de CORS
-  app.enableCors();
+  // 🔒 SECURITY: Configure CORS with specific origin whitelist
+  const allowedOrigins = process.env.FRONTEND_URL
+    ? process.env.FRONTEND_URL.split(',')
+    : ['http://localhost:3000', 'http://localhost:3001'];
+
+  app.enableCors({
+    origin: allowedOrigins,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  });
 
   // Enable Global Validation
   app.useGlobalPipes(new ValidationPipe({
