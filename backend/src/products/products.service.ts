@@ -1,31 +1,31 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { PrismaService } from '../prisma/prisma.service';
+import { CreateProductDto } from './dto/create-product.dto';
 
 @Injectable()
 export class ProductsService {
-  
-  // 1. Crear un producto nuevo (El "Padre")
-  async create(createProductDto: any) {
-    // Por ahora usaremos 'any', luego pondremos el tipo estricto
-    return await prisma.product.create({
-      data: createProductDto,
+  constructor(private prisma: PrismaService) { }
+
+  // 1. Crear un producto nuevo
+  async create(createProductDto: CreateProductDto) {
+    // any cast removed, we assume DTO matches roughly or we let Prisma handle mismatch if strict types aren't fully aligned yet
+    return await this.prisma.product.create({
+      data: createProductDto as any, // Temporary cast until strict DTO alignment
     });
   }
 
   // 2. Traer todos los productos
   async findAll() {
-    return await prisma.product.findMany({
+    return await this.prisma.product.findMany({
       include: {
-        variants: true, // ¡Trae también sus variantes!
+        variants: true,
       }
     });
   }
 
   // 3. Buscar uno por ID
   async findOne(id: string) {
-    return await prisma.product.findUnique({
+    return await this.prisma.product.findUnique({
       where: { id },
       include: { variants: true }
     });
