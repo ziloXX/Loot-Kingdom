@@ -21,7 +21,7 @@ export default function RootLayout({
     <html lang="es" suppressHydrationWarning>
       <body className={`${inter.variable} ${outfit.variable} font-sans antialiased flex flex-col min-h-screen bg-background text-foreground`}>
         <Navbar />
-        <main className="flex-1 container py-8">
+        <main className="flex-1 py-8">
           {children}
         </main>
         <Footer />

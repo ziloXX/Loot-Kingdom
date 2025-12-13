@@ -1,81 +1,116 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, User, Menu } from 'lucide-react';
+import { ShoppingCart, User, Menu, Search, Crown } from 'lucide-react';
 import {
     Sheet,
     SheetContent,
     SheetTrigger,
 } from '@/components/ui/sheet';
+import { Input } from '@/components/ui/input';
 
 export default function Navbar() {
-    const isLogged = true; // Simulated state for now
+    const isLogged = true;
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <div className="container flex h-16 items-center justify-between">
-                <Link href="/" className="flex items-center space-x-2">
-                    <span className="text-xl font-bold tracking-tight">Loot Kingdom</span>
-                </Link>
-
-                {/* Desktop Nav */}
-                <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
-                    <Link href="/products" className="transition-colors hover:text-foreground/80 text-foreground/60 flex items-center gap-1">
-                        <span>⚔️</span> Armería
-                    </Link>
-                    <Link href="/products?category=TCG_CARD" className="transition-colors hover:text-foreground/80 text-foreground/60 flex items-center gap-1">
-                        <span>📜</span> Pergaminos
-                    </Link>
-                    <Link href="/products?tier=SECOND_HAND" className="transition-colors hover:text-primary text-foreground/60 flex items-center gap-1">
-                        <span>☠️</span> Mercado Negro
-                    </Link>
-                    <Link href="/about" className="transition-colors hover:text-foreground/80 text-foreground/60">
-                        Gremio
-                    </Link>
-                </nav>
-
-                <div className="flex items-center gap-4">
-                    <Button variant="ghost" size="icon" className="relative group">
-                        <ShoppingCart className="h-5 w-5 group-hover:text-primary transition-colors" />
-                        <span className="sr-only">Mochila</span>
-                        {/* Badge count simulated */}
-                        <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-primary text-[10px] font-bold text-primary-foreground flex items-center justify-center">
-                            2
+        <header className="sticky top-0 z-50 w-full">
+            {/* Top Bar - Gradient Header (Solaris Style) */}
+            <div className="gradient-header dark:gradient-header-dark text-white py-2 px-4">
+                <div className="container flex items-center justify-between">
+                    {/* Logo */}
+                    <Link href="/" className="flex items-center gap-2 group">
+                        <Crown className="w-7 h-7 text-accent group-hover:scale-110 transition-transform" />
+                        <span className="text-xl font-bold tracking-tight">
+                            LOOT<span className="text-accent">KINGDOM</span>
                         </span>
-                    </Button>
+                    </Link>
 
-                    {isLogged ? (
-                        <div className="flex items-center gap-3 pl-2 border-l ml-2">
-                            <div className="flex flex-col items-end text-xs mr-1 hidden lg:flex">
-                                <span className="font-bold text-amber-500">1,450 🪙</span>
-                                <span className="text-muted-foreground">Lvl 3 Cazador</span>
-                            </div>
-                            <Button variant="ghost" size="icon" className="rounded-full border border-border">
-                                <User className="h-4 w-4" />
-                            </Button>
+                    {/* Desktop Navigation */}
+                    <nav className="hidden lg:flex items-center gap-8 text-sm font-medium">
+                        <Link href="/products" className="hover:text-accent transition-colors py-1 border-b-2 border-transparent hover:border-accent">
+                            Figures
+                        </Link>
+                        <Link href="/products?category=TCG_CARD" className="hover:text-accent transition-colors py-1 border-b-2 border-transparent hover:border-accent">
+                            Trading Cards
+                        </Link>
+                        <Link href="/products?category=PLUSHIE" className="hover:text-accent transition-colors py-1 border-b-2 border-transparent hover:border-accent">
+                            Plushies
+                        </Link>
+                        <Link href="/products?category=DECOR" className="hover:text-accent transition-colors py-1 border-b-2 border-transparent hover:border-accent">
+                            Goods
+                        </Link>
+                        <Link href="/products?tier=SECOND_HAND" className="text-accent font-bold hover:opacity-80 transition-opacity py-1">
+                            Pre-Owned
+                        </Link>
+                    </nav>
+
+                    {/* Search Bar */}
+                    <div className="hidden md:flex items-center gap-2 flex-1 max-w-sm mx-8">
+                        <div className="relative w-full">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/60" />
+                            <Input
+                                placeholder="Search products..."
+                                className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:bg-white/20 focus:border-accent"
+                            />
                         </div>
-                    ) : (
-                        <Button size="sm">Ingresar</Button>
-                    )}
+                    </div>
 
-                    {/* Mobile Menu */}
-                    <Sheet>
-                        <SheetTrigger asChild>
-                            <Button variant="ghost" size="icon" className="md:hidden">
-                                <Menu className="h-5 w-5" />
-                                <span className="sr-only">Menu</span>
+                    {/* User Actions */}
+                    <div className="flex items-center gap-3">
+                        <Button variant="ghost" size="icon" className="relative text-white hover:text-accent hover:bg-white/10">
+                            <ShoppingCart className="h-5 w-5" />
+                            <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-accent text-[11px] font-bold text-accent-foreground flex items-center justify-center">
+                                2
+                            </span>
+                        </Button>
+
+                        {isLogged ? (
+                            <div className="hidden sm:flex items-center gap-3 pl-3 border-l border-white/20">
+                                <div className="flex flex-col items-end text-xs">
+                                    <span className="font-bold text-accent flex items-center gap-1">
+                                        1,450 <span className="text-xs">🪙</span>
+                                    </span>
+                                    <span className="text-white/70">Lvl 3</span>
+                                </div>
+                                <Button variant="ghost" size="icon" className="rounded-full bg-white/10 hover:bg-white/20 text-white">
+                                    <User className="h-4 w-4" />
+                                </Button>
+                            </div>
+                        ) : (
+                            <Button size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90">
+                                Login
                             </Button>
-                        </SheetTrigger>
-                        <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-                            <nav className="flex flex-col gap-4 mt-8">
-                                <Link href="/products" className="text-lg font-medium flex items-center gap-2"><span>⚔️</span> Armería (Figuras)</Link>
-                                <Link href="/cards" className="text-lg font-medium flex items-center gap-2"><span>📜</span> Pergaminos (TCG)</Link>
-                                <Link href="/used" className="text-lg font-medium flex items-center gap-2 text-destructive"><span>☠️</span> Mercado Negro</Link>
-                                <div className="h-px bg-border my-2" />
-                                <Link href="/profile" className="text-lg font-medium">Mi Inventario</Link>
-                            </nav>
-                        </SheetContent>
-                    </Sheet>
+                        )}
+
+                        {/* Mobile Menu */}
+                        <Sheet>
+                            <SheetTrigger asChild>
+                                <Button variant="ghost" size="icon" className="lg:hidden text-white hover:bg-white/10">
+                                    <Menu className="h-5 w-5" />
+                                </Button>
+                            </SheetTrigger>
+                            <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+                                <div className="flex items-center gap-2 mb-8">
+                                    <Crown className="w-6 h-6 text-primary" />
+                                    <span className="text-lg font-bold">LOOT<span className="text-primary">KINGDOM</span></span>
+                                </div>
+                                <nav className="flex flex-col gap-4">
+                                    <Link href="/products" className="text-lg font-medium hover:text-primary transition-colors">Figures</Link>
+                                    <Link href="/products?category=TCG_CARD" className="text-lg font-medium hover:text-primary transition-colors">Trading Cards</Link>
+                                    <Link href="/products?category=PLUSHIE" className="text-lg font-medium hover:text-primary transition-colors">Plushies</Link>
+                                    <Link href="/products?category=DECOR" className="text-lg font-medium hover:text-primary transition-colors">Goods</Link>
+                                    <div className="h-px bg-border my-2" />
+                                    <Link href="/products?tier=SECOND_HAND" className="text-lg font-bold text-primary">Pre-Owned</Link>
+                                    <Link href="/profile" className="text-lg font-medium hover:text-primary transition-colors">My Account</Link>
+                                </nav>
+                            </SheetContent>
+                        </Sheet>
+                    </div>
                 </div>
+            </div>
+
+            {/* Optional: Announcement Bar */}
+            <div className="bg-secondary text-secondary-foreground text-center text-sm py-1.5 px-4">
+                <span className="font-medium">🎄 Holiday Season!</span> Free shipping on orders over $50,000 ARS
             </div>
         </header>
     );
