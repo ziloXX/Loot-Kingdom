@@ -1,14 +1,16 @@
+version: '3.8'
+
 services:
-  db:
+  postgres:
     image: postgres:15-alpine
-    container_name: loot_kingdom_db
-    restart: always
-    environment:
-      POSTGRES_USER: ${DB_USER:-admin}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME:-lootkingdom}
+    container_name: lootkingdom_db
+    restart: unless-stopped
     ports:
-      - '5432:5432'
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: lootpassword
+      POSTGRES_DB: lootkingdom
     volumes:
       - postgres_data:/var/lib/postgresql/data
 

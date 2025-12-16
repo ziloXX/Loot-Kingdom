@@ -1,4 +1,5 @@
-// prisma/schema.prisma
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
   provider = "prisma-client-js"
@@ -9,157 +10,130 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// --------------------------------------
-// 👤 USUARIOS & GAMIFICACIÓN
-// --------------------------------------
-
-model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  username  String   // Nombre de Aventurero
-  password  String   // Hash
-  avatar    String?  
-  role      Role     @default(USER)
-  createdAt DateTime @default(now())
-
-  // RPG Stats
-  xpPoints  Int      @default(0)
-  level     Int      @default(1)
-  lootCoins Int      @default(0) // Saldo actual de monedas
-
-  // Relaciones
-  orders      Order[]
-  coinHistory CoinLedger[]
-  reviews     Review[]
-}
+// ============================================
+// ENUMS - RPG Item Categories & Tiers
+// ============================================
 
 enum Role {
   USER
   ADMIN
 }
 
-// Historial inmutable de monedas (Seguridad)
-model CoinLedger {
-  id        String   @id @default(uuid())
-  amount    Int      // Positivo (Ganó) o Negativo (Gastó)
-  reason    String   // ej: "Compra Orden #123", "Bono Login"
-  createdAt DateTime @default(now())
-  
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
+enum Condition {
+  NEW
+  USED
+  DAMAGED
 }
 
-// --------------------------------------
-// ⚔️ CATÁLOGO & INVENTARIO
-// --------------------------------------
-
-model Product {
-  id          String   @id @default(uuid())
-  title       String
-  slug        String   @unique // SEO: goku-ssj-banpresto
-  description String   @db.Text
-  brand       String   // Banpresto, Konami
-  franchise   String   // Dragon Ball, Pokemon
-  category    Category 
-  images      String[] // Fotos genéricas del producto Padre
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  variants    ProductVariant[]
-  reviews     Review[]
-}
-
-model ProductVariant {
-  id          String   @id @default(uuid())
-  productId   String
-  product     Product  @relation(fields: [productId], references: [id])
-
-  // Lógica de negocio Loot Kingdom
-  tier        ProductTier   @default(OFFICIAL)
-  condition   String?       // Detalle texto: "Sin caja", "Nuevo sellado"
-  internalNotes String?     // Notas privadas del admin
-  
-  price       Decimal       @db.Decimal(10, 2)
-  stock       Int           @default(0)
-  realPhotos  String[]      // Fotos específicas (usados)
-
-  cartItems   CartItem[]
-  orderItems  OrderItem[]
+enum Tier {
+  OFFICIAL
+  BOOTLEG
 }
 
 enum Category {
   FIGURE
-  TCG_CARD
-  PLUSHIE
+  CARD
+  PLUSH
   DECOR
-  APPAREL
-}
-
-enum ProductTier {
-  OFFICIAL        // Nuevo, Sellado, Importación directa
-  SECOND_HAND     // Pre-owned, cuidado, completos
-  BATTLE_DAMAGED  // Usado, Loose, sin caja, detalles estéticos
-}
-
-// --------------------------------------
-// 🛒 COMPRAS & CHECKOUT
-// --------------------------------------
-
-model Order {
-  id          String      @id @default(uuid())
-  userId      String
-  user        User        @relation(fields: [userId], references: [id])
-  
-  status      OrderStatus @default(PENDING)
-  total       Decimal     @db.Decimal(10, 2) // Total en ARS
-  paymentId   String?     // ID de Mercado Pago
-  
-  items       OrderItem[]
-  createdAt   DateTime    @default(now())
-  
-  // Gamificación de la orden
-  awardedXp   Int         @default(0)
-  awardedCoins Int        @default(0)
-}
-
-model OrderItem {
-  id          String   @id @default(uuid())
-  orderId     String
-  order       Order    @relation(fields: [orderId], references: [id])
-  
-  variantId   String
-  variant     ProductVariant @relation(fields: [variantId], references: [id])
-  
-  quantity    Int
-  price       Decimal  @db.Decimal(10, 2) // Precio congelado al momento de compra
-  productTitle String  // Snapshot del titulo
-  condition   String?  // Snapshot de la condicion
+  OTHER
 }
 
 enum OrderStatus {
   PENDING
-  PAID
+  CONFIRMED
   SHIPPED
   DELIVERED
   CANCELLED
 }
 
-// Carrito temporal (Persistencia)
-model CartItem {
-  id        String   @id @default(uuid())
-  userId    String   // O SessionID si es invitado
-  variantId String
-  variant   ProductVariant @relation(fields: [variantId], references: [id])
-  quantity  Int
+// ============================================
+// MODELS - The Kingdom's Data Scrolls
+// ============================================
+
+model User {
+  id         String   @id @default(cuid())
+  email      String   @unique
+  password   String
+  username   String   @unique
+  lootCoins  Int      @default(0)
+  role       Role     @default(USER)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  cartItems  CartItem[]
+  orders     Order[]
+
+  @@map("users")
 }
 
-model Review {
-  id        String   @id @default(uuid())
-  content   String
-  rating    Int
+model Product {
+  id          String    @id @default(cuid())
+  title       String
+  slug        String    @unique
+  description String    @db.Text
+  price       Int       // Price in cents (ARS)
+  stock       Int       @default(0)
+  brand       String?
+  franchise   String?
+  condition   Condition @default(NEW)
+  tier        Tier      @default(OFFICIAL)
+  category    Category  @default(FIGURE)
+  images      String[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  cartItems   CartItem[]
+  orderItems  OrderItem[]
+
+  @@map("products")
+}
+
+model CartItem {
+  id        String   @id @default(cuid())
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   productId String
-  product   Product  @relation(fields: [productId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+  @@map("cart_items")
+}
+
+model Order {
+  id              String      @id @default(cuid())
+  status          OrderStatus @default(PENDING)
+  total           Int         // Total in cents (ARS)
+  lootCoinsEarned Int         @default(0)
+  shippingAddress String?     @db.Text
+  notes           String?     @db.Text
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  // Relations
+  userId          String
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items           OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id            String  @id @default(cuid())
+  quantity      Int
+  priceAtOrder  Int     // Frozen price at time of order (cents)
+  
+  // Relations
+  orderId       String
+  order         Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId     String
+  product       Product @relation(fields: [productId], references: [id])
+
+  @@map("order_items")
 }
