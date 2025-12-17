@@ -1,15 +1,45 @@
 "use client";
 
 import Link from "next/link";
-import { Search, ShoppingCart, Menu, Coins, Crown } from "lucide-react";
-import { useAppStore } from "@/store/app-store";
+import { useRouter } from "next/navigation";
+import { Search, ShoppingCart, Menu, Coins, Crown, User, LogOut } from "lucide-react";
+import { useAuthStore } from "@/store/auth";
 import { formatLootCoins } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Header() {
-    const { user, cartCount } = useAppStore();
+    const router = useRouter();
+    const { user, isAuthenticated, logout } = useAuthStore();
+    const [cartCount, setCartCount] = useState(0);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const count = cartCount();
+    const [mounted, setMounted] = useState(false);
+
+    // Hydration fix for localStorage
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    const handleLogout = () => {
+        logout();
+        router.push("/");
+    };
+
+    // Prevent hydration mismatch
+    if (!mounted) {
+        return (
+            <header className="sticky top-0 z-50 bg-rpg-bg/95 backdrop-blur-sm border-b-2 border-rpg-primary/30">
+                <div className="max-w-7xl mx-auto px-4 py-3">
+                    <div className="flex items-center justify-between gap-4">
+                        <Link href="/" className="flex items-center gap-2 group">
+                            <div className="pixel-border-gold p-2 bg-rpg-bg">
+                                <span className="font-pixel text-rpg-gold text-lg tracking-wider">LK</span>
+                            </div>
+                        </Link>
+                    </div>
+                </div>
+            </header>
+        );
+    }
 
     return (
         <header className="sticky top-0 z-50 bg-rpg-bg/95 backdrop-blur-sm border-b-2 border-rpg-primary/30">
@@ -37,24 +67,49 @@ export default function Header() {
                         </div>
                     </div>
 
-                    {/* Right Section - LootCoins & Cart */}
+                    {/* Right Section */}
                     <div className="flex items-center gap-3">
-                        {/* LootCoins Badge - THE CRITICAL HUD ELEMENT */}
-                        {user && (
-                            <div className="hidden sm:flex items-center gap-2 pixel-border-gold bg-rpg-bg px-3 py-1.5">
-                                <Coins className="w-4 h-4 text-rpg-gold loot-coin-glow" />
-                                <span className="font-pixel text-xs text-rpg-gold">
-                                    {formatLootCoins(user.lootCoins)}
-                                </span>
-                            </div>
-                        )}
+                        {isAuthenticated && user ? (
+                            <>
+                                {/* LootCoins Badge */}
+                                <div className="hidden sm:flex items-center gap-2 pixel-border-gold bg-rpg-bg px-3 py-1.5">
+                                    <Coins className="w-4 h-4 text-rpg-gold loot-coin-glow" />
+                                    <span className="font-pixel text-xs text-rpg-gold">
+                                        {formatLootCoins(user.lootCoins)}
+                                    </span>
+                                </div>
 
-                        {/* User Level Badge */}
-                        {user && (
-                            <div className="hidden lg:flex items-center gap-1.5 bg-rpg-bg-secondary px-2 py-1 rounded border border-rpg-primary/30">
-                                <Crown className="w-3.5 h-3.5 text-rpg-primary" />
-                                <span className="font-pixel text-[10px] text-rpg-text-muted">LVL 5</span>
-                            </div>
+                                {/* Username Badge - Link to Profile */}
+                                <Link
+                                    href="/profile"
+                                    className="hidden lg:flex items-center gap-1.5 bg-rpg-bg-secondary px-2 py-1 rounded border border-rpg-primary/30 hover:border-rpg-primary transition-colors"
+                                >
+                                    <Crown className="w-3.5 h-3.5 text-rpg-primary" />
+                                    <span className="font-pixel text-[10px] text-rpg-text-muted">
+                                        {user.username}
+                                    </span>
+                                </Link>
+
+                                {/* Logout Button */}
+                                <button
+                                    onClick={handleLogout}
+                                    className="hidden lg:flex p-2 bg-rpg-bg-secondary rounded-lg border-2 border-rpg-bg-tertiary hover:border-rpg-danger transition-colors"
+                                    title="Logout"
+                                >
+                                    <LogOut className="w-4 h-4 text-rpg-text-muted hover:text-rpg-danger" />
+                                </button>
+                            </>
+                        ) : (
+                            /* Login Button */
+                            <Link
+                                href="/auth"
+                                className="flex items-center gap-2 px-4 py-2 bg-rpg-primary hover:bg-rpg-primary-dark rounded-lg transition-colors"
+                            >
+                                <User className="w-4 h-4 text-white" />
+                                <span className="font-pixel text-[10px] text-white hidden sm:inline">
+                                    LOGIN
+                                </span>
+                            </Link>
                         )}
 
                         {/* Cart */}
@@ -62,9 +117,9 @@ export default function Header() {
                             <div className="p-2 bg-rpg-bg-secondary rounded-lg border-2 border-rpg-bg-tertiary group-hover:border-rpg-primary transition-colors">
                                 <ShoppingCart className="w-5 h-5 text-rpg-text group-hover:text-rpg-primary transition-colors" />
                             </div>
-                            {count > 0 && (
+                            {cartCount > 0 && (
                                 <span className="absolute -top-1 -right-1 bg-rpg-gold text-rpg-bg text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center font-pixel text-[10px]">
-                                    {count}
+                                    {cartCount}
                                 </span>
                             )}
                         </Link>
@@ -92,7 +147,7 @@ export default function Header() {
                 </div>
 
                 {/* Mobile LootCoins */}
-                {user && (
+                {isAuthenticated && user && (
                     <div className="mt-3 sm:hidden flex items-center justify-center gap-2 pixel-border-gold bg-rpg-bg px-3 py-1.5">
                         <Coins className="w-4 h-4 text-rpg-gold loot-coin-glow" />
                         <span className="font-pixel text-xs text-rpg-gold">

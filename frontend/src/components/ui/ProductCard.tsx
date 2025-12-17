@@ -1,10 +1,14 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ShoppingCart } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ShoppingCart, Loader2 } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
-import { useAppStore } from "@/store/app-store";
+import { useAuthStore } from "@/store/auth";
+import { api } from "@/lib/api";
+import { useToast } from "@/components/ui/Toast";
 import type { Product } from "@/lib/mock-data";
 
 interface ProductCardProps {
@@ -12,7 +16,36 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-    const { addToCart } = useAppStore();
+    const router = useRouter();
+    const { isAuthenticated } = useAuthStore();
+    const { showToast } = useToast();
+    const [isAdding, setIsAdding] = useState(false);
+
+    const handleAddToCart = async () => {
+        // Check auth first
+        if (!isAuthenticated) {
+            showToast("info", "Debes iniciar sesión para agregar items");
+            router.push("/auth");
+            return;
+        }
+
+        setIsAdding(true);
+        try {
+            const response = await api.addToCart(product.id);
+
+            if (response.error) {
+                showToast("error", response.error);
+                return;
+            }
+
+            showToast("cart", `¡${product.title} equipado!`);
+        } catch (error) {
+            console.error("Add to cart failed:", error);
+            showToast("error", "Error al agregar al carrito");
+        } finally {
+            setIsAdding(false);
+        }
+    };
 
     return (
         <div className="rpg-card overflow-hidden flex flex-col group">
@@ -97,11 +130,15 @@ export default function ProductCard({ product }: ProductCardProps) {
                     </div>
 
                     <button
-                        onClick={() => addToCart(product)}
-                        disabled={product.stock === 0}
+                        onClick={handleAddToCart}
+                        disabled={product.stock === 0 || isAdding}
                         className="p-2 bg-rpg-primary hover:bg-rpg-primary-dark disabled:bg-rpg-bg-tertiary disabled:cursor-not-allowed rounded-lg transition-colors"
                     >
-                        <ShoppingCart className="w-4 h-4 text-white" />
+                        {isAdding ? (
+                            <Loader2 className="w-4 h-4 text-white animate-spin" />
+                        ) : (
+                            <ShoppingCart className="w-4 h-4 text-white" />
+                        )}
                     </button>
                 </div>
             </div>

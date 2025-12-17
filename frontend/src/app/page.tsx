@@ -1,17 +1,27 @@
 import Header from "@/components/layout/Header";
 import HeroBento from "@/components/home/HeroBento";
 import ProductCarousel from "@/components/home/ProductCarousel";
+import { getProducts } from "@/lib/api";
 import { mockProducts } from "@/lib/mock-data";
 
-export default function HomePage() {
-  // Get newest products (simulated by taking first 6)
-  const newArrivals = mockProducts.slice(0, 6);
+export default async function HomePage() {
+  // Fetch products from API
+  let products = await getProducts();
+
+  // Fallback to mock data if API fails
+  if (!products || products.length === 0) {
+    console.warn("API unavailable, using mock data");
+    products = mockProducts;
+  }
+
+  // Get newest products (first 6)
+  const newArrivals = products.slice(0, 6);
 
   // Get official items for featured section
-  const officialItems = mockProducts.filter((p) => p.tier === "OFFICIAL").slice(0, 6);
+  const officialItems = products.filter((p) => p.tier === "OFFICIAL").slice(0, 6);
 
   // Get budget-friendly items
-  const budgetItems = mockProducts.filter((p) => p.tier === "BOOTLEG").slice(0, 6);
+  const budgetItems = products.filter((p) => p.tier === "BOOTLEG").slice(0, 6);
 
   return (
     <div className="min-h-screen">
