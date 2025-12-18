@@ -11,8 +11,8 @@ export declare class CartService {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
-                title: string;
                 slug: string;
+                title: string;
                 description: string;
                 price: number;
                 stock: number;
@@ -32,8 +32,8 @@ export declare class CartService {
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            title: string;
             slug: string;
+            title: string;
             description: string;
             price: number;
             stock: number;
@@ -46,26 +46,26 @@ export declare class CartService {
         };
     } & {
         id: string;
-        quantity: number;
         createdAt: Date;
         updatedAt: Date;
         userId: string;
+        quantity: number;
         productId: string;
     }>;
     updateQuantity(userId: string, itemId: string, quantity: number): Promise<{
         id: string;
-        quantity: number;
         createdAt: Date;
         updatedAt: Date;
         userId: string;
+        quantity: number;
         productId: string;
     }>;
     removeItem(userId: string, itemId: string): Promise<{
         id: string;
-        quantity: number;
         createdAt: Date;
         updatedAt: Date;
         userId: string;
+        quantity: number;
         productId: string;
     }>;
     clearCart(userId: string): Promise<import(".prisma/client").Prisma.BatchPayload>;

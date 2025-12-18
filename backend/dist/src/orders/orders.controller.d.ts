@@ -13,8 +13,8 @@ export declare class OrdersController {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
-                title: string;
                 slug: string;
+                title: string;
                 description: string;
                 price: number;
                 stock: number;
@@ -28,18 +28,18 @@ export declare class OrdersController {
         } & {
             id: string;
             quantity: number;
-            productId: string;
             priceAtOrder: number;
             orderId: string;
+            productId: string;
         })[];
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         status: import(".prisma/client").$Enums.OrderStatus;
         total: number;
         lootCoinsEarned: number;
         shippingAddress: string | null;
         notes: string | null;
-        createdAt: Date;
-        updatedAt: Date;
         userId: string;
     }>;
     confirmPayment(req: {
@@ -52,8 +52,8 @@ export declare class OrdersController {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
-                title: string;
                 slug: string;
+                title: string;
                 description: string;
                 price: number;
                 stock: number;
@@ -67,19 +67,19 @@ export declare class OrdersController {
         } & {
             id: string;
             quantity: number;
-            productId: string;
             priceAtOrder: number;
             orderId: string;
+            productId: string;
         })[];
     } & {
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         status: import(".prisma/client").$Enums.OrderStatus;
         total: number;
         lootCoinsEarned: number;
         shippingAddress: string | null;
         notes: string | null;
-        createdAt: Date;
-        updatedAt: Date;
         userId: string;
     }>;
     getOrders(req: {
@@ -92,8 +92,8 @@ export declare class OrdersController {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
-                title: string;
                 slug: string;
+                title: string;
                 description: string;
                 price: number;
                 stock: number;
@@ -107,19 +107,19 @@ export declare class OrdersController {
         } & {
             id: string;
             quantity: number;
-            productId: string;
             priceAtOrder: number;
             orderId: string;
+            productId: string;
         })[];
     } & {
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         status: import(".prisma/client").$Enums.OrderStatus;
         total: number;
         lootCoinsEarned: number;
         shippingAddress: string | null;
         notes: string | null;
-        createdAt: Date;
-        updatedAt: Date;
         userId: string;
     })[]>;
     getOrder(req: {
@@ -132,8 +132,8 @@ export declare class OrdersController {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
-                title: string;
                 slug: string;
+                title: string;
                 description: string;
                 price: number;
                 stock: number;
@@ -147,19 +147,19 @@ export declare class OrdersController {
         } & {
             id: string;
             quantity: number;
-            productId: string;
             priceAtOrder: number;
             orderId: string;
+            productId: string;
         })[];
     } & {
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         status: import(".prisma/client").$Enums.OrderStatus;
         total: number;
         lootCoinsEarned: number;
         shippingAddress: string | null;
         notes: string | null;
-        createdAt: Date;
-        updatedAt: Date;
         userId: string;
     }) | null>;
 }

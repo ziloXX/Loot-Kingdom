@@ -72,12 +72,16 @@ export default function Header() {
                         {isAuthenticated && user ? (
                             <>
                                 {/* LootCoins Badge */}
-                                <div className="hidden sm:flex items-center gap-2 pixel-border-gold bg-rpg-bg px-3 py-1.5">
+                                <Link
+                                    href="/rewards"
+                                    className="hidden sm:flex items-center gap-2 pixel-border-gold bg-rpg-bg px-3 py-1.5 hover:bg-rpg-bg-secondary transition-colors cursor-pointer"
+                                    title="Canjear LootCoins"
+                                >
                                     <Coins className="w-4 h-4 text-rpg-gold loot-coin-glow" />
                                     <span className="font-pixel text-xs text-rpg-gold">
                                         {formatLootCoins(user.lootCoins)}
                                     </span>
-                                </div>
+                                </Link>
 
                                 {/* Username Badge - Link to Profile */}
                                 <Link

@@ -25,8 +25,16 @@ export default function AdminDashboardPage() {
     const [dashboard, setDashboard] = useState<AdminDashboard | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [mounted, setMounted] = useState(false);
+
+    // Handle hydration mismatch
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     useEffect(() => {
+        if (!mounted) return;
+
         if (!isAuthenticated) {
             router.push("/auth");
             return;
@@ -39,7 +47,7 @@ export default function AdminDashboardPage() {
         }
 
         fetchDashboard();
-    }, [isAuthenticated, user, router]);
+    }, [mounted, isAuthenticated, user, router]);
 
     const fetchDashboard = async () => {
         setIsLoading(true);
@@ -51,6 +59,15 @@ export default function AdminDashboardPage() {
         }
         setIsLoading(false);
     };
+
+    // Wait for client-side hydration
+    if (!mounted) {
+        return (
+            <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+                <Loader2 className="w-8 h-8 text-red-500 animate-spin" />
+            </div>
+        );
+    }
 
     if (error) {
         return (

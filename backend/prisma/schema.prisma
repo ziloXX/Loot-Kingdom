@@ -63,6 +63,7 @@ model User {
   // Relations
   cartItems  CartItem[]
   orders     Order[]
+  coupons    Coupon[]
 
   @@map("users")
 }
@@ -136,4 +137,20 @@ model OrderItem {
   product       Product @relation(fields: [productId], references: [id])
 
   @@map("order_items")
+}
+
+model Coupon {
+  id              String    @id @default(cuid())
+  code            String    @unique
+  discountPercent Int
+  lootCoinsCost   Int       // How many LC were spent
+  isActive        Boolean   @default(true)
+  usedAt          DateTime?
+  createdAt       DateTime  @default(now())
+
+  // Relations - null userId means global coupon
+  userId          String?
+  user            User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("coupons")
 }

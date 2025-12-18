@@ -152,42 +152,52 @@ export default function ProfilePage() {
                     {/* Right Column - Treasury & Quest Log */}
                     <div className="lg:col-span-2 space-y-6">
                         {/* Treasury */}
-                        <div className="pixel-border-gold bg-rpg-bg p-6">
-                            <h3 className="font-pixel text-lg text-rpg-gold mb-4 flex items-center gap-2">
-                                <Coins className="w-5 h-5" />
-                                TREASURY
-                            </h3>
+                        <Link href="/rewards" className="block">
+                            <div className="pixel-border-gold bg-rpg-bg p-6 hover:bg-rpg-bg-secondary transition-colors cursor-pointer group">
+                                <h3 className="font-pixel text-lg text-rpg-gold mb-4 flex items-center gap-2">
+                                    <Coins className="w-5 h-5" />
+                                    TREASURY
+                                    <ChevronRight className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+                                </h3>
 
-                            {/* Total LootCoins */}
-                            <div className="flex items-center justify-center gap-4 py-6 bg-rpg-bg-secondary rounded-lg mb-4">
-                                <Coins className="w-10 h-10 text-rpg-gold loot-coin-glow" />
-                                <span className="font-pixel text-4xl text-rpg-gold loot-coin-glow">
-                                    {formatLootCoins(stats.user.lootCoins)} LC
-                                </span>
-                            </div>
-
-                            {/* Recent Coin Gains */}
-                            {stats.recentCoinGains.length > 0 && (
-                                <div>
-                                    <h4 className="text-rpg-text-muted text-xs uppercase mb-3">Ganancias Recientes</h4>
-                                    <div className="space-y-2">
-                                        {stats.recentCoinGains.map((gain) => (
-                                            <div
-                                                key={gain.orderId}
-                                                className="flex items-center justify-between bg-rpg-bg rounded p-2"
-                                            >
-                                                <span className="text-rpg-text-muted text-sm">
-                                                    Orden #{gain.orderId.slice(-6).toUpperCase()}
-                                                </span>
-                                                <span className="text-rpg-gold font-pixel text-sm">
-                                                    +{formatLootCoins(gain.amount)} LC
-                                                </span>
-                                            </div>
-                                        ))}
-                                    </div>
+                                {/* Total LootCoins */}
+                                <div className="flex items-center justify-center gap-4 py-6 bg-rpg-bg-secondary rounded-lg mb-4">
+                                    <Coins className="w-10 h-10 text-rpg-gold loot-coin-glow" />
+                                    <span className="font-pixel text-4xl text-rpg-gold loot-coin-glow">
+                                        {formatLootCoins(stats.user.lootCoins)} LC
+                                    </span>
                                 </div>
-                            )}
-                        </div>
+
+                                {/* CTA to Shrine */}
+                                <div className="text-center mb-4">
+                                    <span className="text-rpg-primary text-sm group-hover:underline">
+                                        🏛️ Visitar El Santuario para canjear
+                                    </span>
+                                </div>
+
+                                {/* Recent Coin Gains */}
+                                {stats.recentCoinGains.length > 0 && (
+                                    <div>
+                                        <h4 className="text-rpg-text-muted text-xs uppercase mb-3">Ganancias Recientes</h4>
+                                        <div className="space-y-2">
+                                            {stats.recentCoinGains.map((gain) => (
+                                                <div
+                                                    key={gain.orderId}
+                                                    className="flex items-center justify-between bg-rpg-bg rounded p-2"
+                                                >
+                                                    <span className="text-rpg-text-muted text-sm">
+                                                        Orden #{gain.orderId.slice(-6).toUpperCase()}
+                                                    </span>
+                                                    <span className="text-rpg-gold font-pixel text-sm">
+                                                        +{formatLootCoins(gain.amount)} LC
+                                                    </span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </Link>
 
                         {/* Quest Log - Order History */}
                         <div className="pixel-border bg-rpg-bg-secondary p-6">

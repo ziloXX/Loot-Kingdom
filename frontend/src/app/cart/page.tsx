@@ -18,6 +18,9 @@ import {
     Loader2,
     ShoppingBag,
     Sparkles,
+    Tag,
+    Check,
+    X,
 } from "lucide-react";
 
 export default function CartPage() {
@@ -29,6 +32,14 @@ export default function CartPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [isUpdating, setIsUpdating] = useState<string | null>(null);
     const [isCheckingOut, setIsCheckingOut] = useState(false);
+
+    // Coupon state
+    const [couponCode, setCouponCode] = useState("");
+    const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
+    const [appliedCoupon, setAppliedCoupon] = useState<{
+        code: string;
+        discountPercent: number;
+    } | null>(null);
 
     // Fetch cart on mount
     useEffect(() => {
@@ -113,7 +124,37 @@ export default function CartPage() {
         (sum, item) => sum + item.product.price * item.quantity,
         0
     );
-    const lootCoinsToEarn = Math.floor(subtotal / 2000); // 5% in LC (1 LC per $20 ARS)
+    const discount = appliedCoupon
+        ? Math.floor(subtotal * (appliedCoupon.discountPercent / 100))
+        : 0;
+    const total = subtotal - discount;
+    const lootCoinsToEarn = Math.floor(total / 2000); // 5% in LC (1 LC per $20 ARS)
+
+    // Validate coupon
+    const handleValidateCoupon = async () => {
+        if (!couponCode.trim()) return;
+
+        setIsValidatingCoupon(true);
+        const response = await api.validateCoupon(couponCode);
+
+        if (response.data?.valid && response.data.coupon) {
+            setAppliedCoupon({
+                code: response.data.coupon.code,
+                discountPercent: response.data.coupon.discountPercent,
+            });
+            showToast("success", `¡Cupón aplicado! ${response.data.coupon.discountPercent}% de descuento`);
+        } else {
+            showToast("error", response.data?.error || "Cupón inválido");
+        }
+
+        setIsValidatingCoupon(false);
+    };
+
+    const removeCoupon = () => {
+        setAppliedCoupon(null);
+        setCouponCode("");
+        showToast("info", "Cupón removido");
+    };
 
     // Loading state
     if (isLoading) {
@@ -274,6 +315,61 @@ export default function CartPage() {
                                     <span className="text-rpg-text">{formatPrice(subtotal)}</span>
                                 </div>
 
+                                {/* Coupon Input */}
+                                <div className="mb-4">
+                                    <label className="text-rpg-text-muted text-xs block mb-2">
+                                        Código de Invocación (Cupón)
+                                    </label>
+                                    {appliedCoupon ? (
+                                        <div className="flex items-center justify-between bg-rpg-success/10 border border-rpg-success/30 rounded-lg p-3">
+                                            <div className="flex items-center gap-2">
+                                                <Tag className="w-4 h-4 text-rpg-success" />
+                                                <span className="font-pixel text-sm text-rpg-success">
+                                                    {appliedCoupon.code}
+                                                </span>
+                                                <span className="text-rpg-text-muted text-xs">
+                                                    (-{appliedCoupon.discountPercent}%)
+                                                </span>
+                                            </div>
+                                            <button
+                                                onClick={removeCoupon}
+                                                className="text-rpg-text-muted hover:text-rpg-danger"
+                                            >
+                                                <X className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <div className="flex gap-2">
+                                            <input
+                                                type="text"
+                                                value={couponCode}
+                                                onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                                                placeholder="LOOT-XX-XXXX"
+                                                className="flex-1 bg-rpg-bg-secondary border border-rpg-bg-tertiary rounded px-3 py-2 text-sm text-rpg-text placeholder:text-rpg-text-muted/50 focus:border-rpg-primary focus:outline-none"
+                                            />
+                                            <button
+                                                onClick={handleValidateCoupon}
+                                                disabled={isValidatingCoupon || !couponCode.trim()}
+                                                className="px-3 py-2 bg-rpg-primary/20 border border-rpg-primary/30 rounded text-rpg-primary hover:bg-rpg-primary/30 disabled:opacity-50 transition-colors"
+                                            >
+                                                {isValidatingCoupon ? (
+                                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                                ) : (
+                                                    <Check className="w-4 h-4" />
+                                                )}
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Discount */}
+                                {appliedCoupon && (
+                                    <div className="flex justify-between text-sm mb-4 text-rpg-success">
+                                        <span>Descuento ({appliedCoupon.discountPercent}%)</span>
+                                        <span>-{formatPrice(discount)}</span>
+                                    </div>
+                                )}
+
                                 {/* Shipping */}
                                 <div className="flex justify-between text-sm mb-4">
                                     <span className="text-rpg-text-muted">Envío</span>
@@ -286,7 +382,7 @@ export default function CartPage() {
                                 <div className="flex justify-between mb-6">
                                     <span className="text-rpg-text font-medium">Total</span>
                                     <span className="font-pixel text-rpg-gold text-xl">
-                                        {formatPrice(subtotal)}
+                                        {formatPrice(total)}
                                     </span>
                                 </div>
 

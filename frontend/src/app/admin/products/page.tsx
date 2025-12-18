@@ -8,6 +8,7 @@ import { useAuthStore } from "@/store/auth";
 import { api, type CreateProductData } from "@/lib/api";
 import { Product } from "@/lib/mock-data";
 import { formatPrice } from "@/lib/utils";
+import ImageUpload from "@/components/admin/ImageUpload";
 import {
     Shield,
     Package,
@@ -384,17 +385,13 @@ export default function AdminProductsPage() {
                                         className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white"
                                     />
                                 </div>
-                                <div>
-                                    <label className="block text-gray-400 text-sm mb-1">Image URL</label>
-                                    <input
-                                        type="text"
-                                        value={formData.images?.[0] || ""}
-                                        onChange={(e) => setFormData({ ...formData, images: [e.target.value] })}
-                                        className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white"
-                                        placeholder="https://..."
-                                    />
-                                </div>
                             </div>
+
+                            {/* Multi-Image Upload */}
+                            <ImageUpload
+                                value={formData.images || []}
+                                onChange={(urls) => setFormData({ ...formData, images: urls })}
+                            />
 
                             <div className="flex justify-end gap-3 pt-4">
                                 <button

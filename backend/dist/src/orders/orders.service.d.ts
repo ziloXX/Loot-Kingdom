@@ -9,8 +9,8 @@ export declare class OrdersService {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
-                title: string;
                 slug: string;
+                title: string;
                 description: string;
                 price: number;
                 stock: number;
@@ -24,18 +24,18 @@ export declare class OrdersService {
         } & {
             id: string;
             quantity: number;
-            productId: string;
             priceAtOrder: number;
             orderId: string;
+            productId: string;
         })[];
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         status: import(".prisma/client").$Enums.OrderStatus;
         total: number;
         lootCoinsEarned: number;
         shippingAddress: string | null;
         notes: string | null;
-        createdAt: Date;
-        updatedAt: Date;
         userId: string;
     }>;
     confirmPayment(orderId: string, paymentStatus: string): Promise<{
@@ -44,8 +44,8 @@ export declare class OrdersService {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
-                title: string;
                 slug: string;
+                title: string;
                 description: string;
                 price: number;
                 stock: number;
@@ -59,19 +59,19 @@ export declare class OrdersService {
         } & {
             id: string;
             quantity: number;
-            productId: string;
             priceAtOrder: number;
             orderId: string;
+            productId: string;
         })[];
     } & {
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         status: import(".prisma/client").$Enums.OrderStatus;
         total: number;
         lootCoinsEarned: number;
         shippingAddress: string | null;
         notes: string | null;
-        createdAt: Date;
-        updatedAt: Date;
         userId: string;
     }>;
     getOrders(userId: string): Promise<({
@@ -80,8 +80,8 @@ export declare class OrdersService {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
-                title: string;
                 slug: string;
+                title: string;
                 description: string;
                 price: number;
                 stock: number;
@@ -95,19 +95,19 @@ export declare class OrdersService {
         } & {
             id: string;
             quantity: number;
-            productId: string;
             priceAtOrder: number;
             orderId: string;
+            productId: string;
         })[];
     } & {
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         status: import(".prisma/client").$Enums.OrderStatus;
         total: number;
         lootCoinsEarned: number;
         shippingAddress: string | null;
         notes: string | null;
-        createdAt: Date;
-        updatedAt: Date;
         userId: string;
     })[]>;
     getOrder(userId: string, orderId: string): Promise<({
@@ -116,8 +116,8 @@ export declare class OrdersService {
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
-                title: string;
                 slug: string;
+                title: string;
                 description: string;
                 price: number;
                 stock: number;
@@ -131,19 +131,19 @@ export declare class OrdersService {
         } & {
             id: string;
             quantity: number;
-            productId: string;
             priceAtOrder: number;
             orderId: string;
+            productId: string;
         })[];
     } & {
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         status: import(".prisma/client").$Enums.OrderStatus;
         total: number;
         lootCoinsEarned: number;
         shippingAddress: string | null;
         notes: string | null;
-        createdAt: Date;
-        updatedAt: Date;
         userId: string;
     }) | null>;
 }

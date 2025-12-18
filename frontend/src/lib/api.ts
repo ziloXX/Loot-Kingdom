@@ -120,6 +120,39 @@ export interface AdminOrder extends OrderResponse {
     };
 }
 
+// Coupon Types
+export interface RewardOption {
+    id: string;
+    name: string;
+    percent: number;
+    cost: number;
+}
+
+export interface Coupon {
+    id: string;
+    code: string;
+    discountPercent: number;
+    lootCoinsCost: number;
+    isActive: boolean;
+    usedAt?: string | null;
+    createdAt: string;
+}
+
+export interface RedeemResponse {
+    coupon: Coupon;
+    newBalance: number;
+}
+
+export interface ValidateCouponResponse {
+    valid: boolean;
+    error?: string;
+    coupon?: {
+        id: string;
+        code: string;
+        discountPercent: number;
+    };
+}
+
 class ApiClient {
     private baseUrl: string;
 
@@ -370,6 +403,32 @@ class ApiClient {
             body: JSON.stringify({ status }),
             auth: true,
         });
+    }
+
+    // ============================================
+    // COUPONS
+    // ============================================
+
+    async getRewardOptions(): Promise<ApiResponse<RewardOption[]>> {
+        return this.request<RewardOption[]>("/coupons/options");
+    }
+
+    async redeemCoupon(rewardId: string): Promise<ApiResponse<RedeemResponse>> {
+        return this.request<RedeemResponse>("/coupons/redeem", {
+            method: "POST",
+            body: JSON.stringify({ rewardId }),
+            auth: true,
+        });
+    }
+
+    async validateCoupon(code: string): Promise<ApiResponse<ValidateCouponResponse>> {
+        return this.request<ValidateCouponResponse>(`/coupons/validate?code=${encodeURIComponent(code)}`, {
+            auth: true,
+        });
+    }
+
+    async getMyCoupons(): Promise<ApiResponse<Coupon[]>> {
+        return this.request<Coupon[]>("/coupons/my-coupons", { auth: true });
     }
 }
 

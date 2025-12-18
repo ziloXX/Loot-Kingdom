@@ -15,12 +15,14 @@ const auth_module_1 = require("./auth/auth.module");
 const cart_module_1 = require("./cart/cart.module");
 const orders_module_1 = require("./orders/orders.module");
 const admin_module_1 = require("./admin/admin.module");
+const coupons_module_1 = require("./coupons/coupons.module");
+const upload_module_1 = require("./upload/upload.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [products_module_1.ProductsModule, auth_module_1.AuthModule, cart_module_1.CartModule, orders_module_1.OrdersModule, admin_module_1.AdminModule],
+        imports: [products_module_1.ProductsModule, auth_module_1.AuthModule, cart_module_1.CartModule, orders_module_1.OrdersModule, admin_module_1.AdminModule, coupons_module_1.CouponsModule, upload_module_1.UploadModule],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
     })

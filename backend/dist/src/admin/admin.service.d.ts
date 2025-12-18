@@ -12,8 +12,10 @@ export declare class AdminService {
     }>;
     getAllProducts(): Promise<{
         id: string;
-        title: string;
+        createdAt: Date;
+        updatedAt: Date;
         slug: string;
+        title: string;
         description: string;
         price: number;
         stock: number;
@@ -23,8 +25,6 @@ export declare class AdminService {
         tier: import(".prisma/client").$Enums.Tier;
         category: import(".prisma/client").$Enums.Category;
         images: string[];
-        createdAt: Date;
-        updatedAt: Date;
     }[]>;
     createProduct(data: {
         title: string;
@@ -40,8 +40,10 @@ export declare class AdminService {
         images?: string[];
     }): Promise<{
         id: string;
-        title: string;
+        createdAt: Date;
+        updatedAt: Date;
         slug: string;
+        title: string;
         description: string;
         price: number;
         stock: number;
@@ -51,8 +53,6 @@ export declare class AdminService {
         tier: import(".prisma/client").$Enums.Tier;
         category: import(".prisma/client").$Enums.Category;
         images: string[];
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     updateProduct(id: string, data: Partial<{
         title: string;
@@ -67,8 +67,10 @@ export declare class AdminService {
         description: string;
     }>): Promise<{
         id: string;
-        title: string;
+        createdAt: Date;
+        updatedAt: Date;
         slug: string;
+        title: string;
         description: string;
         price: number;
         stock: number;
@@ -78,13 +80,13 @@ export declare class AdminService {
         tier: import(".prisma/client").$Enums.Tier;
         category: import(".prisma/client").$Enums.Category;
         images: string[];
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     deleteProduct(id: string): Promise<{
         id: string;
-        title: string;
+        createdAt: Date;
+        updatedAt: Date;
         slug: string;
+        title: string;
         description: string;
         price: number;
         stock: number;
@@ -94,8 +96,6 @@ export declare class AdminService {
         tier: import(".prisma/client").$Enums.Tier;
         category: import(".prisma/client").$Enums.Category;
         images: string[];
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     getAllOrders(): Promise<({
         user: {
@@ -106,8 +106,10 @@ export declare class AdminService {
         items: ({
             product: {
                 id: string;
-                title: string;
+                createdAt: Date;
+                updatedAt: Date;
                 slug: string;
+                title: string;
                 description: string;
                 price: number;
                 stock: number;
@@ -117,8 +119,6 @@ export declare class AdminService {
                 tier: import(".prisma/client").$Enums.Tier;
                 category: import(".prisma/client").$Enums.Category;
                 images: string[];
-                createdAt: Date;
-                updatedAt: Date;
             };
         } & {
             id: string;
@@ -128,23 +128,23 @@ export declare class AdminService {
             productId: string;
         })[];
     } & {
-        total: number;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        lootCoinsEarned: number;
         status: import(".prisma/client").$Enums.OrderStatus;
+        total: number;
+        lootCoinsEarned: number;
         shippingAddress: string | null;
         notes: string | null;
         userId: string;
     })[]>;
     updateOrderStatus(orderId: string, status: 'PENDING' | 'CONFIRMED' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED'): Promise<{
-        total: number;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        lootCoinsEarned: number;
         status: import(".prisma/client").$Enums.OrderStatus;
+        total: number;
+        lootCoinsEarned: number;
         shippingAddress: string | null;
         notes: string | null;
         userId: string;

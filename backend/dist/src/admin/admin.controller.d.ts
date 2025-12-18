@@ -15,8 +15,10 @@ export declare class AdminController {
     }>;
     getProducts(): Promise<{
         id: string;
-        title: string;
+        createdAt: Date;
+        updatedAt: Date;
         slug: string;
+        title: string;
         description: string;
         price: number;
         stock: number;
@@ -26,8 +28,6 @@ export declare class AdminController {
         tier: import(".prisma/client").$Enums.Tier;
         category: import(".prisma/client").$Enums.Category;
         images: string[];
-        createdAt: Date;
-        updatedAt: Date;
     }[]>;
     createProduct(body: {
         title: string;
@@ -43,8 +43,10 @@ export declare class AdminController {
         images?: string[];
     }): Promise<{
         id: string;
-        title: string;
+        createdAt: Date;
+        updatedAt: Date;
         slug: string;
+        title: string;
         description: string;
         price: number;
         stock: number;
@@ -54,8 +56,6 @@ export declare class AdminController {
         tier: import(".prisma/client").$Enums.Tier;
         category: import(".prisma/client").$Enums.Category;
         images: string[];
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     updateProduct(id: string, body: Partial<{
         title: string;
@@ -70,8 +70,10 @@ export declare class AdminController {
         description: string;
     }>): Promise<{
         id: string;
-        title: string;
+        createdAt: Date;
+        updatedAt: Date;
         slug: string;
+        title: string;
         description: string;
         price: number;
         stock: number;
@@ -81,13 +83,13 @@ export declare class AdminController {
         tier: import(".prisma/client").$Enums.Tier;
         category: import(".prisma/client").$Enums.Category;
         images: string[];
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     deleteProduct(id: string): Promise<{
         id: string;
-        title: string;
+        createdAt: Date;
+        updatedAt: Date;
         slug: string;
+        title: string;
         description: string;
         price: number;
         stock: number;
@@ -97,8 +99,6 @@ export declare class AdminController {
         tier: import(".prisma/client").$Enums.Tier;
         category: import(".prisma/client").$Enums.Category;
         images: string[];
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     getOrders(): Promise<({
         user: {
@@ -109,8 +109,10 @@ export declare class AdminController {
         items: ({
             product: {
                 id: string;
-                title: string;
+                createdAt: Date;
+                updatedAt: Date;
                 slug: string;
+                title: string;
                 description: string;
                 price: number;
                 stock: number;
@@ -120,8 +122,6 @@ export declare class AdminController {
                 tier: import(".prisma/client").$Enums.Tier;
                 category: import(".prisma/client").$Enums.Category;
                 images: string[];
-                createdAt: Date;
-                updatedAt: Date;
             };
         } & {
             id: string;
@@ -131,23 +131,23 @@ export declare class AdminController {
             productId: string;
         })[];
     } & {
-        total: number;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        lootCoinsEarned: number;
         status: import(".prisma/client").$Enums.OrderStatus;
+        total: number;
+        lootCoinsEarned: number;
         shippingAddress: string | null;
         notes: string | null;
         userId: string;
     })[]>;
     updateOrderStatus(id: string, status: 'PENDING' | 'CONFIRMED' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED'): Promise<{
-        total: number;
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        lootCoinsEarned: number;
         status: import(".prisma/client").$Enums.OrderStatus;
+        total: number;
+        lootCoinsEarned: number;
         shippingAddress: string | null;
         notes: string | null;
         userId: string;
